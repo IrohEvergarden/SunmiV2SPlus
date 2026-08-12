@@ -6,8 +6,8 @@
 <title>Sunmi V2s Plus - interaktywny model terminala</title>
 <style>
   :root{
-    --stage-bg-1:#1b1c20;
-    --stage-bg-2:#0a0a0c;
+    --stage-bg-1:#2e2f37;
+    --stage-bg-2:#08080a;
     --panel:#202126;
     --panel-line:#33343a;
     --ink:#eef0f2;
@@ -27,6 +27,7 @@
     margin:0;
     min-height:100vh;
     background:
+      radial-gradient(ellipse 460px 360px at 50% 22%, rgba(255,106,26,.18), rgba(255,106,26,0) 72%),
       radial-gradient(ellipse 900px 560px at 50% 30%, var(--stage-bg-1), var(--stage-bg-2) 70%);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     color:var(--ink);
@@ -62,6 +63,16 @@
     width:100%;
     max-width:340px;
     margin:18px auto 0;
+  }
+  .terminal-wrap::before{
+    content:"";
+    position:absolute;
+    left:50%; bottom:-6px;
+    width:78%; height:26px;
+    transform:translateX(-50%);
+    background:radial-gradient(ellipse at center, rgba(0,0,0,.55), rgba(0,0,0,0) 72%);
+    filter:blur(2px);
+    z-index:-1;
   }
   .terminal-photo{
     width:100%;
@@ -350,18 +361,6 @@
   .settings-row .value.dim{ color:var(--ink-faint); }
   .mini-btn{ background:var(--panel); border:1px solid var(--panel-line); color:var(--ink); font-size:10.5px; padding:5px 8px; border-radius:7px; cursor:pointer; white-space:nowrap; }
   .volume-slider{ width:90px; accent-color:var(--orange); }
-
-  /* TROUBLESHOOT */
-  .issue-list{ display:flex; flex-direction:column; gap:8px; margin-bottom:10px; }
-  .issue-item{
-    text-align:left; background:var(--panel); border:1px solid var(--panel-line); color:var(--ink);
-    border-radius:12px; padding:12px; font-size:13px; font-weight:600; cursor:pointer;
-  }
-  .issue-item:hover{ border-color:var(--orange); }
-  .issue-detail h2{ font-size:15px; margin:2px 0 6px; }
-  .issue-detail .desc{ font-size:12.5px; color:var(--ink-dim); margin-bottom:10px; }
-  .issue-detail ol{ margin:0 0 14px; padding-left:18px; font-size:12.5px; display:flex; flex-direction:column; gap:6px; }
-  .issue-detail ol li::marker{ color:var(--orange); font-weight:700; }
 
   h2{ font-size:16px; margin:2px 0 10px; }
 
@@ -760,21 +759,6 @@
             <button class="settings-photo-back-chevron" data-goto="orderpad-menu-ustawienia" aria-label="Wróć"></button>
           </div>
 
-          <div class="app-screen" data-screen="troubleshoot" hidden>
-            <h2>Типові несправності</h2>
-            <div class="issue-list">
-              <button class="issue-item" data-issue="wifi">📶 Немає з'єднання з інтернетом</button>
-              <button class="issue-item" data-issue="paper">🧾 Закінчився папір для чеків</button>
-              <button class="issue-item" data-issue="frozen">⏸ Термінал не реагує</button>
-            </div>
-            <button class="btn ghost" data-goto="home">← Назад</button>
-          </div>
-
-          <div class="app-screen issue-detail" data-screen="issue-detail" hidden>
-            <div id="issueDetailBody"></div>
-            <button class="btn ghost" data-goto="troubleshoot">← До списку несправностей</button>
-          </div>
-
           <div class="reboot-veil" id="rebootVeil"><div class="spinner"></div><span>Перезавантаження…</span></div>
           <div class="toast" id="toast"></div>
 
@@ -1037,51 +1021,7 @@
         return;
       }
 
-      var issueItem = e.target.closest('.issue-item');
-      if(issueItem){
-        var issue = issueItem.getAttribute('data-issue');
-        renderIssue(issue);
-        showScreen('issue-detail');
-        return;
-      }
     });
-
-    var ISSUES = {
-      wifi: {
-        title: "Немає з'єднання з інтернетом",
-        desc: "Термінал показує сірий значок Wi-Fi і не отримує нові замовлення.",
-        steps: [
-          "Перевірте, чи роутер ресторану увімкнений і роздає інтернет.",
-          "Налаштування → Wi-Fi мережа → перепідключення.",
-          "Якщо не допомогло - перезавантажте термінал."
-        ]
-      },
-      paper: {
-        title: "Закінчився папір для чеків",
-        desc: "Принтер друкує порожні чеки або блимає помаранчевим індикатором.",
-        steps: [
-          "Знайдіть кнопку OPEN збоку термінала (ліва сторона).",
-          "Посуньте її, щоб відкрити кришку принтера.",
-          "Вставте новий рулон термопаперу та закрийте кришку до клацання."
-        ]
-      },
-      frozen: {
-        title: "Термінал не реагує (завис)",
-        desc: "Екран не реагує на дотики, кнопки не працюють.",
-        steps: [
-          "Утримуйте кнопку живлення 8–10 секунд для примусового перезавантаження.",
-          "Дочекайтесь появи логотипу SUNMI.",
-          "Якщо не допомогло - ескалюйте на L2 підтримку."
-        ]
-      }
-    };
-
-    function renderIssue(key){
-      var d = ISSUES[key];
-      var body = document.getElementById('issueDetailBody');
-      var lis = d.steps.map(function(s){ return '<li>' + s + '</li>'; }).join('');
-      body.innerHTML = '<h2>' + d.title + '</h2><p class="desc">' + d.desc + '</p><ol>' + lis + '</ol>';
-    }
 
   })();
   </script>
